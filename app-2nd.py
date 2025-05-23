@@ -49,7 +49,7 @@ if choice:
     graphs_list = ['scatter_chart', 'bar_chart', 'line_chart']
     graph_user = st.selectbox("Quel type de graphique tu souhaites ? ", graphs_list)
 
-    if graph_user and x_axis and y_axis:
+    if graph_user and x_axis in dataset_user.columns and y_axis in dataset_user.columns:
         # Créer un sous-DataFrame avec les colonnes sélectionnées
         df_chart = dataset_user[[x_axis, y_axis]]
         
