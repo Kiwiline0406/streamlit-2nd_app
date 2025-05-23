@@ -52,11 +52,10 @@ if choice:
     if graph_user and x_axis and y_axis:
         # Créer un sous-DataFrame avec les colonnes sélectionnées
         df_chart = dataset_user[[x_axis, y_axis]]
-        # Renommer pour garder des noms standards, si nécessaire
-        df_chart = df_chart.rename(columns={x_axis: "x", y_axis: "y"})
+        
         # Appel dynamique à la fonction st.scatter_chart, etc.
         chart_func = getattr(st, graph_user)
-        chart_func(data=df_chart, x='x', y='y')
+        chart_func(data=df_chart, x=x_axis, y=y_axis)
     
     # Activation de la matrice de corrélation
     agree = st.checkbox("Afficher la matrice de corrélation")
