@@ -36,7 +36,8 @@ if choice:
     # Affichage du dataset
     st.badge("Dataset chargé avec succès", icon=":material/check:", color="green")
     st.subheader("Aperçu du dataset :chart_with_upwards_trend:", divider=True)
-    dataset_user = st.dataframe(datasets_dico[choice])
+    dataset_user = datasets_dico[choice]
+    st.dataframe(dataset_user)
 
     # Affichage de la selectbox colonne X
     st.subheader("Crée ton propre graphique :art:", divider=True)
@@ -47,16 +48,24 @@ if choice:
     #Choix du type de graphique
     graphs_list = ['scatter_chart', 'bar_chart', 'line_chart']
     graph_user = st.selectbox("Quel type de graphique tu souhaites ? ", graphs_list)
-    if graph_user:
-        getattr(st, graph_user)(dataset_user, x = x_axis, y = y_axis)
+
+    if graph_user and x_axis and y_axis:
+        # Créer un sous-DataFrame avec les colonnes sélectionnées
+        df_chart = dataset_user[[x_axis, y_axis]]
+        # Renommer pour garder des noms standards, si nécessaire
+        df_chart = df_chart.rename(columns={x_axis: "x", y_axis: "y"})
+        # Appel dynamique à la fonction st.scatter_chart, etc.
+        chart_func = getattr(st, graph_user)
+        chart_func(data=df_chart, x='x', y='y')
     
     # Activation de la matrice de corrélation
     agree = st.checkbox("Afficher la matrice de corrélation")
     col_num = dataset_user.select_dtypes(include= 'number')
     if agree:
-        f, ax = pl.subplots(figsize=(10, 8))
+        fig, ax = plt.subplots(figsize=(10, 8))
         corr = col_num.corr()
         sns.heatmap(corr,
-                    cmap=sns.diverging_palette(220, 10, as_cmap=True),
+                    cmap='PuOr',
                     vmin=-1.0, vmax=1.0,
                     square=True, ax=ax)
+        st.pyplot(fig)
