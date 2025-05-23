@@ -8,3 +8,5 @@ This app should contains :
 - the possibility to choose which dataset, the user wants to use
 - for displaying a graph, the choice for x-axis and y-axis, and th type of graph they want to use (scatter_chart, bar_chart, or line_chart)
 - then a checkbox for displaying (or not) the correlation matrix
+
+the app is here : https://wcs-second-app.streamlit.app/
