@@ -1,0 +1,62 @@
+import pandas as pd
+import streamlit as st
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Définition d'un titre
+st.title("Manipulation de données et création de graphiques")
+
+# Import des datasets
+names_dataset_list = ['anagrams', 'anscombe', 'attention', 'brain_networks', 'car_crashes', 
+                      'diamonds', 'dots', 'dowjones', 'exercise', 'flights', 
+                      'fmri', 'geyser', 'glue', 'healthexp', 'iris', 
+                      'mpg', 'penguins', 'planets', 'seaice', 'taxis', 
+                      'tips', 'titanic']
+
+# Définition d'un dictionnaire vide
+datasets_dico ={}
+
+for item in names_dataset_list:
+
+    # Lecture des fichiers suivant les valeurs de names_datasets_list
+    url = f"https://raw.githubusercontent.com/mwaskom/seaborn-data/master/{item}.csv"
+    try:
+        df = pd.read_csv(url, sep=',')
+        # Ajout des couples clés/valeurs dans le dictionnaire
+        datasets_dico[item]= df
+    except Exception as e:
+        st.warning(f"Erreur pour {item} : {e}")
+
+# Définition de la première liste déroulante : 1 seul choix possible
+choice = st.selectbox("Quel dataset t'intéresse ?",
+             names_dataset_list, placeholder= "Il y a sûrement quelque chose qui te plaît ici, regarde bien...") 
+
+# Affichage du résultat sélectionné
+if choice:
+    # Affichage du dataset
+    st.badge("Dataset chargé avec succès", icon=":material/check:", color="green")
+    st.subheader("Aperçu du dataset :chart_with_upwards_trend:", divider=True)
+    dataset_user = st.dataframe(datasets_dico[choice])
+
+    # Affichage de la selectbox colonne X
+    st.subheader("Crée ton propre graphique :art:", divider=True)
+    colonnes_list = dataset_user.columns.tolist()
+    x_axis = st.selectbox("Choisis la colonne X : ", colonnes_list)
+    y_axis = st.selectbox("Choisis la colonne Y : ", colonnes_list)
+
+    #Choix du type de graphique
+    graphs_list = ['scatter_chart', 'bar_chart', 'line_chart']
+    graph_user = st.selectbox("Quel type de graphique tu souhaites ? ", graphs_list)
+    if graph_user:
+        getattr(st, graph_user)(dataset_user, x = x_axis, y = y_axis)
+    
+    # Activation de la matrice de corrélation
+    agree = st.checkbox("Afficher la matrice de corrélation")
+    col_num = dataset_user.select_dtypes(include= 'number')
+    if agree:
+        f, ax = pl.subplots(figsize=(10, 8))
+        corr = col_num.corr()
+        sns.heatmap(corr,
+                    cmap=sns.diverging_palette(220, 10, as_cmap=True),
+                    vmin=-1.0, vmax=1.0,
+                    square=True, ax=ax)
